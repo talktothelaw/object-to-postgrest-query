@@ -1,6 +1,6 @@
 {
   "name": "object-to-postgrest-query",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Converts a JavaScript object into a query string compatible with PostgREST.",
   "main": "index.js",
   "scripts": {
