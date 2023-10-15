@@ -3,7 +3,7 @@ interface QueryOperators {
 }
 
 interface OrderObject {
-	order?: { [key: string]: 'asc' | 'desc' };
+	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string };
 }
 
 type QueryObject = QueryOperators & OrderObject;
@@ -52,7 +52,7 @@ export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: bo
 	}
 	
 	for (const [key, value] of Object.entries(obj)) {
-		if (key !== 'order' && typeof value === 'object' && value !== null) {  // Exclude 'order' key here
+		if (key !== 'order' && typeof value === 'object' && value !== null) {
 			const [operator, operand] = Object.entries(value)[0];
 			const formatted = formatValue(key, operator, operand);
 			if (isUrlParams) {
@@ -60,7 +60,7 @@ export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: bo
 			} else {
 				params[formatted.split('=')[0]] = formatted.split('=')[1];
 			}
-		} else if (key !== 'order') {  // Exclude 'order' key here
+		} else if (key !== 'order') {
 			if (isUrlParams) {
 				urlParams.append(key, value?.toString?.());
 			} else {
@@ -71,15 +71,23 @@ export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: bo
 	
 	// Handle ordering (if specified)
 	if (obj.order) {
-		for (const [key, value] of Object.entries(obj.order)) {
-			const orderParam = `${key}=order.${value}`;
-			if (isUrlParams) {
-				urlParams.append(orderParam.split('=')[0], orderParam.split('=')[1]);
-			} else {
-				params[orderParam.split('=')[0]] = orderParam.split('=')[1];
-			}
+		const orderings = Object.entries(obj.order).map(([key, value]) => `${key}.${value}`).join(',');
+		if (isUrlParams) {
+			urlParams.append('order', orderings);
+		} else {
+			params['order'] = orderings;
 		}
 	}
 	
 	return isUrlParams ? urlParams.toString() : params;
 }
+
+// test
+// const obj = {
+// 	order: {
+// 		age: 'desc',  // Order by age in descending order
+// 		name: 'asc'   // Order by name in ascending order
+// 	}
+// };
+// const postgrestQuery = objectToPostgrestQuery(obj, true);
+// console.log(postgrestQuery);  // Output: "age=order.desc&name=order.asc"
