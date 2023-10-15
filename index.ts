@@ -1,10 +1,18 @@
-interface QueryObject {
-	[key: string]: string | { [operator: string]: string | number | Array<string | number> };
+interface QueryOperators {
+	[key: string]: string | number | { [operator: string]: string | number | Array<string | number> };
 }
+
+interface OrderObject {
+	order?: { [key: string]: 'asc' | 'desc' };
+}
+
+type QueryObject = QueryOperators & OrderObject;
+
 
 export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: boolean = false): { [key: string]: string } | string {
 	const params: { [key: string]: string } = {};
 	const urlParams = new URLSearchParams();
+	
 	const operatorMap: { [operator: string]: string } = {
 		eq: 'eq',
 		gt: 'gt',
@@ -44,22 +52,34 @@ export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: bo
 	}
 	
 	for (const [key, value] of Object.entries(obj)) {
-		if (typeof value === 'object' && value !== null) {
+		if (key !== 'order' && typeof value === 'object' && value !== null) {  // Exclude 'order' key here
 			const [operator, operand] = Object.entries(value)[0];
 			const formatted = formatValue(key, operator, operand);
-			if(isUrlParams){
+			if (isUrlParams) {
 				urlParams.append(formatted.split('=')[0], formatted.split('=')[1]);
 			} else {
-				params[formatted.split('=')[0]]= formatted.split('=')[1];
-				
+				params[formatted.split('=')[0]] = formatted.split('=')[1];
 			}
-		} else {
-			if(isUrlParams) {
-				urlParams.append(key, value);
+		} else if (key !== 'order') {  // Exclude 'order' key here
+			if (isUrlParams) {
+				urlParams.append(key, value?.toString?.());
 			} else {
-				params[key]= value as string
+				params[key] = value as string;
 			}
 		}
 	}
-	return isUrlParams ? urlParams.toString() : params
+	
+	// Handle ordering (if specified)
+	if (obj.order) {
+		for (const [key, value] of Object.entries(obj.order)) {
+			const orderParam = `${key}=order.${value}`;
+			if (isUrlParams) {
+				urlParams.append(orderParam.split('=')[0], orderParam.split('=')[1]);
+			} else {
+				params[orderParam.split('=')[0]] = orderParam.split('=')[1];
+			}
+		}
+	}
+	
+	return isUrlParams ? urlParams.toString() : params;
 }
