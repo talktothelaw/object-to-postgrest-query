@@ -259,11 +259,16 @@ const postgrestQuery = objectToPostgrestQuery(obj, true);
 console.log(postgrestQuery);  // Output: "range=-|-.[1,10]"
 ```
 
-26. **Not (`not`)**:
+26. **Ordering (`order`)**:
 ```javascript
-const obj = { age: { 'not': 25 } };
+const obj = {
+	order: {
+		age: 'desc',  // Order by age in descending order
+		name: 'asc'   // Order by name in ascending order
+	}
+};
 const postgrestQuery = objectToPostgrestQuery(obj, true);
-console.log(postgrestQuery);  // Output: "age=not.25"
+console.log(postgrestQuery);  // Output: "age=order.desc&name=order.asc"
 ```
 
 27. **Or (`or`)**:
@@ -280,14 +285,21 @@ const postgrestQuery = objectToPostgrestQuery(obj, true);
 console.log(postgrestQuery);  // Output: "age=and.gte.25,lte.30"
 ```
 
-29. **All (`all`)**:
+29. **And (`and`)**:
+```javascript
+const obj = { age: { 'and': { 'gte': 25, 'lte': 30 } } };
+const postgrestQuery = objectToPostgrestQuery(obj, true);
+console.log(postgrestQuery);  // Output: "age=and.gte.25,lte.30"
+```
+
+30. **All (`all`)**:
 ```javascript
 const obj = { tags: { 'all': '{example,new}' } };
 const postgrestQuery = objectToPostgrestQuery(obj, true);
 console.log(postgrestQuery);  // Output: "tags=all.{example,new}"
 ```
 
-30. **Any (`any`)**:
+31. **Any (`any`)**:
 ```javascript
 const obj = { tags: { 'any': '{example,new}' } };
 const postgrestQuery = objectToPostgrestQuery(obj, true);

@@ -1,12 +1,17 @@
 {
   "name": "object-to-postgrest-query",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Converts a JavaScript object into a query string compatible with PostgREST.",
-  "main": "index.js",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "files": [
+    "lib/"
+  ],
   "scripts": {
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run tsc",
+    "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
