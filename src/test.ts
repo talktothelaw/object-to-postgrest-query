@@ -6,5 +6,7 @@ const obj = {
 		name: 'asc'   // Order by name in ascending order
 	}
 };
-const postgrestQuery = objectToPostgrestQuery(obj, true);
+const postgrestQuery = objectToPostgrestQuery({
+
+});
 console.log(postgrestQuery);  // Output: "age=order.desc&name=order.asc"

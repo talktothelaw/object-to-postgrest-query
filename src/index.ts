@@ -3,7 +3,7 @@ interface QueryOperators {
 }
 
 interface OrderObject {
-	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null };
+	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null| any};
 }
 
 type QueryObject = QueryOperators & OrderObject;

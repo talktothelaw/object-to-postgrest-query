@@ -7,13 +7,6 @@
   "files": [
     "lib/"
   ],
-  "lib": [
-    "dom",
-    "es6",
-    "es2017",
-    "esnext.asynciterable"
-  ],
-  "type": "module",
   "scripts": {
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
