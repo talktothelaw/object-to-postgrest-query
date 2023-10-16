@@ -71,18 +71,23 @@ export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: bo
 	
 	// Handle ordering (if specified)
 	if (obj.order) {
-		const orderings = Object.entries(obj.order).map(([key, value]) => `${key}.${value}`).join(',');
-		if (isUrlParams) {
-			urlParams.append('order', orderings);
-		} else {
-			params['order'] = orderings;
+		const orderings = Object.entries(obj.order)
+			.filter(([key, value]) => value !== undefined && value !== '')
+			.map(([key, value]) => `${key}.${value}`)
+			.join(',');
+		if (orderings) {  // check if 'orderings' is not an empty string after filtering
+			if (isUrlParams) {
+				urlParams.append('order', orderings);
+			} else {
+				params['order'] = orderings;
+			}
 		}
 	}
 	
 	return isUrlParams ? urlParams.toString() : params;
 }
 
-// test
+// // test
 // const obj = {
 // 	order: {
 // 		age: 'desc',  // Order by age in descending order
