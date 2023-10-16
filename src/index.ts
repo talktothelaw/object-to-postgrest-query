@@ -1,10 +1,18 @@
-interface QueryOperators {
+export interface QueryOperators {
 	[key: string]: string | number | { [operator: string]: string | number | Array<string | number> };
 }
 
-interface OrderObject {
+export interface OrderObject {
 	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null| any};
 }
+
+export enum OrderValues {
+	ASC = 'asc',
+	DESC = 'desc',
+	ASC_NULLS_FIRST = 'asc.nullsfirst',
+	DESC_NULLS_LAST = 'desc.nullslast'
+}
+
 
 type QueryObject = QueryOperators & OrderObject;
 
@@ -72,8 +80,8 @@ export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: bo
 	// Handle ordering (if specified)
 	if (obj.order) {
 		const orderings = Object.entries(obj.order)
-			.filter(([key, value]) => value !== undefined && value !== '')
-			.map(([key, value]) => `${key}.${value}`)
+			.filter(([, value]: [string, OrderValues | null | undefined]) => value !== undefined && value !== null)
+			.map(([key, value]: [string, OrderValues]) => `${key}.${value}`)
 			.join(',');
 		if (orderings) {  // check if 'orderings' is not an empty string after filtering
 			if (isUrlParams) {

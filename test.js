@@ -1,4 +1,4 @@
-import objectToPostgrestQuery from "./index.js";
+const objectToPostgrestQuery = require('./lib/cjs/index.js').default
 
 const obj = {
 	order: {
@@ -6,7 +6,5 @@ const obj = {
 		name: 'asc'   // Order by name in ascending order
 	}
 };
-const postgrestQuery = objectToPostgrestQuery({
-
-});
+const postgrestQuery = objectToPostgrestQuery(obj, true);
 console.log(postgrestQuery);  // Output: "age=order.desc&name=order.asc"

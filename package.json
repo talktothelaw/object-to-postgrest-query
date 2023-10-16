@@ -1,6 +1,6 @@
 {
   "name": "object-to-postgrest-query",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Converts a JavaScript object into a query string compatible with PostgREST.",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
@@ -8,9 +8,10 @@
     "lib/"
   ],
   "scripts": {
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
     "prepublishOnly": "npm run tsc",
+    "dev": "npm run tsc && nodemon src/test.js",
     "tsc": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -33,6 +34,7 @@
   "homepage": "https://github.com/talktothelaw/object-to-postgrest-query#readme",
   "dependencies": {},
   "devDependencies": {
+    "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   }
