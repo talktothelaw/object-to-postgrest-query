@@ -2,6 +2,9 @@ export interface QueryOperators {
 	[key: string]: string | number | undefined | null | { [operator: string]: string | number | Array<string | number> | undefined | null };
 }
 
+
+const allowedOrdering = ['asc', 'desc', 'asc.nullsfirst', 'desc.nullslast']
+
 export interface OrderObject {
 	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null | any };
 }
@@ -97,6 +100,7 @@ export default function objectToPostgrestQuery(
 		if (containsUnwantedString(order, otherOptions)) return;
 		const orderings = Object.entries(order)
 			.filter(([, val]) => isValidValue(val))
+			.filter(([, val]) => allowedOrdering.includes(val))
 			.map(([key, val]) => `${key}.${val}`)
 			.join(',');
 		if (orderings) {
