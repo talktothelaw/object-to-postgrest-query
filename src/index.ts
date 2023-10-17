@@ -97,7 +97,6 @@ export default function objectToPostgrestQuery(
 	
 	function handleOrder(order: string | number | { [p: string]: string | number | Array<string | number> }) {
 		if (!order) return;
-		if (containsUnwantedString(order, otherOptions)) return;
 		const orderings = Object.entries(order)
 			.filter(([, val]) => isValidValue(val))
 			.filter(([, val]) => allowedOrdering.includes(val))
