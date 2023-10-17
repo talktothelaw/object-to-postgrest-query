@@ -55,8 +55,8 @@ function formatValue(key: string, operator: string, value: string | number | Arr
 
 interface IObjectToPostgrestQueryOptions {
 	isUrlParams: boolean
-	removeUndefinedStringValue: boolean
-	removeNullStringValue: boolean
+	removeUndefinedStringValue?: boolean
+	removeNullStringValue?: boolean
 }
 
 const defaultOptions = {
@@ -80,7 +80,7 @@ function containsUnwantedString(value: any, options: Omit<IObjectToPostgrestQuer
 
 export default function objectToPostgrestQuery(
 	obj: QueryObject,
-	options: IObjectToPostgrestQueryOptions
+	options?: IObjectToPostgrestQueryOptions
 ): Record<string, string> | string {
 	
 	const params: Record<string, string> = {};
