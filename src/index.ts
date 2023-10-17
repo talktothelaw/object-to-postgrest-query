@@ -1,11 +1,9 @@
-import containsUndefinedString from "./utils/lib.js";
-
 export interface QueryOperators {
 	[key: string]: string | number | { [operator: string]: string | number | Array<string | number> };
 }
 
 export interface OrderObject {
-	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null| any};
+	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null | any };
 }
 
 export enum OrderValues {
@@ -55,25 +53,56 @@ function formatValue(key: string, operator: string, value: string | number | Arr
 	return op ? `${key}=${op}.${value}` : `${key}=${value}`;
 }
 
-export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: boolean = false): Record<string, string> | string {
+interface IObjectToPostgrestQueryOptions {
+	isUrlParams: boolean
+	removeUndefinedStringValue: boolean
+	removeNullStringValue: boolean
+}
+
+const defaultOptions = {
+	isUrlParams: false,
+	removeUndefinedStringValue: true,
+	removeNullStringValue: true
+}
+
+function containsUnwantedString(value: any, options: Omit<IObjectToPostgrestQueryOptions, "isUrlParams">): boolean {
+	let hasErrorOne = false
+	let hasErrorTwo = false
+	if (options.removeNullStringValue) {
+		hasErrorOne =/null(?![a-z])/i.test(JSON.stringify(value))
+	}
+	if (options.removeUndefinedStringValue) {
+		hasErrorTwo = /undefined(?![a-z])/i.test(JSON.stringify(value))
+	}
+
+	return hasErrorOne ? hasErrorOne : hasErrorTwo;
+}
+
+export default function objectToPostgrestQuery(
+	obj: QueryObject,
+	options: IObjectToPostgrestQueryOptions
+): Record<string, string> | string {
+	
 	const params: Record<string, string> = {};
 	const urlParams = new URLSearchParams();
+	const { isUrlParams, ...otherOptions } = { ...defaultOptions, ...options }
 	
 	Object.entries(obj).forEach(([key, value]) => {
 		if (key === 'order') {
 			handleOrder(value);
 		} else if (isValidValue(value)) {
 			if (typeof value === 'object') {
-				handleObjectValue(key, value);
-			} else {
-				handlePrimitiveValue(key, value);
+				return handleObjectValue(key, value);
 			}
+			
+			handlePrimitiveValue(key, value);
 		}
 	});
 	
-	function handleOrder(value: string | number | { [p: string]: string | number | Array<string | number> }) {
-		if (!value) return;
-		const orderings = Object.entries(value)
+	function handleOrder(order: string | number | { [p: string]: string | number | Array<string | number | OrderValues> }) {
+		if (!order) return;
+		if (containsUnwantedString(order, otherOptions)) return;
+		const orderings = Object.entries(order)
 			.filter(([, val]) => isValidValue(val))
 			.map(([key, val]) => `${key}.${val}`)
 			.join(',');
@@ -83,12 +112,14 @@ export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: bo
 	}
 	
 	function handleObjectValue(key: string, value: object) {
+		if (containsUnwantedString(value, otherOptions)) return;
 		const [operator, operand] = Object.entries(value)[0];
 		const formatted = formatValue(key, operator, operand);
 		addToParams(formatted.split('=')[0], formatted.split('=')[1]);
 	}
 	
 	function handlePrimitiveValue(key: string, value: string | number) {
+		if( containsUnwantedString(value, otherOptions))return;
 		addToParams(key, value.toString());
 	}
 	
@@ -100,11 +131,13 @@ export default function objectToPostgrestQuery(obj: QueryObject, isUrlParams: bo
 		}
 	}
 	
+	
 	function isValidValue(value: any): boolean {
-		return value !== null && value !== undefined && value !== '' && !containsUndefinedString(value);
+		return value !== null && value !== undefined && value !== '';
 	}
 	
 	return isUrlParams ? urlParams.toString() : params;
 }
+
 
 
