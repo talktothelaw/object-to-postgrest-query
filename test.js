@@ -4,7 +4,7 @@ const obj = {
 	limit: 1,
 	offset: 1,
 	order: {
-		updated_at: "j"
+		updated_at: undefined
 	},
 	slug:  {ilike:`*${"undefined"}*`}
 };

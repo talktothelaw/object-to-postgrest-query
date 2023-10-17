@@ -1,19 +1,13 @@
 export interface QueryOperators {
-	[key: string]: string | number | { [operator: string]: string | number | Array<string | number> };
+	[key: string]: string | number | undefined | null | { [operator: string]: string | number | Array<string | number> | undefined | null };
 }
 
 export interface OrderObject {
 	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null | any };
 }
 
-export enum OrderValues {
-	ASC = 'asc',
-	DESC = 'desc',
-	ASC_NULLS_FIRST = 'asc.nullsfirst',
-	DESC_NULLS_LAST = 'desc.nullslast'
-}
 
-type QueryObject = QueryOperators & OrderObject;
+type QueryObject = QueryOperators | OrderObject;
 
 const operatorMap: { [operator: string]: string } = {
 	eq: 'eq',
@@ -69,12 +63,12 @@ function containsUnwantedString(value: any, options: Omit<IObjectToPostgrestQuer
 	let hasErrorOne = false
 	let hasErrorTwo = false
 	if (options.removeNullStringValue) {
-		hasErrorOne =/null(?![a-z])/i.test(JSON.stringify(value))
+		hasErrorOne = /null(?![a-z])/i.test(JSON.stringify(value))
 	}
 	if (options.removeUndefinedStringValue) {
 		hasErrorTwo = /undefined(?![a-z])/i.test(JSON.stringify(value))
 	}
-
+	
 	return hasErrorOne ? hasErrorOne : hasErrorTwo;
 }
 
@@ -94,12 +88,11 @@ export default function objectToPostgrestQuery(
 			if (typeof value === 'object') {
 				return handleObjectValue(key, value);
 			}
-			
 			handlePrimitiveValue(key, value);
 		}
 	});
 	
-	function handleOrder(order: string | number | { [p: string]: string | number | Array<string | number | OrderValues> }) {
+	function handleOrder(order: string | number | { [p: string]: string | number | Array<string | number> }) {
 		if (!order) return;
 		if (containsUnwantedString(order, otherOptions)) return;
 		const orderings = Object.entries(order)
@@ -119,7 +112,7 @@ export default function objectToPostgrestQuery(
 	}
 	
 	function handlePrimitiveValue(key: string, value: string | number) {
-		if( containsUnwantedString(value, otherOptions))return;
+		if (containsUnwantedString(value, otherOptions)) return;
 		addToParams(key, value.toString());
 	}
 	
