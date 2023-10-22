@@ -1,5 +1,11 @@
+
+
+interface DataField {
+	[key: string]: {
+		[key in keyof typeof operatorMap]?: string | number | Array<string | number> | object
+	};
+}
 export interface QueryOperators {
-	[key: keyof typeof operatorMap & string ]: string | number | undefined | null | { [operator: string]: string | number | Array<string | number> | undefined | null };
 	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null | any };
 	select?: string;
 }
@@ -12,9 +18,9 @@ export interface OrderObject {
 }
 
 
-type QueryObject = QueryOperators | OrderObject;
+type QueryObject = QueryOperators | OrderObject | DataField;
 
-const operatorMap: { [operator: string]: string } = {
+const operatorMap = {
 	eq: 'eq',
 	gt: 'gt',
 	gte: 'gte',
@@ -48,7 +54,7 @@ const operatorMap: { [operator: string]: string } = {
 };
 
 function formatValue(key: string, operator: string, value: string | number | Array<string | number>): string {
-	const op = operatorMap[operator];
+	const op = operatorMap[operator as keyof typeof operatorMap];
 	return op ? `${key}=${op}.${value}` : `${key}=${value}`;
 }
 
@@ -109,8 +115,12 @@ export default function objectToPostgrestQuery(
 		}
 	}
 	
-	function handleObjectValue(key: string, value: object) {
+	function handleObjectValue(key: string, value: keyof typeof operatorMap | string) {
 		if (containsUnwantedString(value, otherOptions)) return;
+		if(Object.keys(value).length === 0) {
+			const errorObject =  JSON.stringify(value, null, 2)
+			throw new Error(`Remove empty query value: ${errorObject}`)
+		}
 		const [operator, operand] = Object.entries(value)[0];
 		const formatted = formatValue(key, operator, operand);
 		addToParams(formatted.split('=')[0], formatted.split('=')[1]);

@@ -10,5 +10,9 @@ const obj = {
 };
 
 
-const postgrestQuery = objectToPostgrestQuery(obj);
+const postgrestQuery = objectToPostgrestQuery({
+ law: {
+
+ }
+});
 console.log(postgrestQuery);  // Output: "age=order.desc&name=order.asc"
