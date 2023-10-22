@@ -1,4 +1,4 @@
-const objectToPostgrestQuery = require('./lib/cjs/index.js').default
+const objectToPostgrestQuery = require('./lib/cjs/index').default
 
 const obj = {
 	limit: 1,

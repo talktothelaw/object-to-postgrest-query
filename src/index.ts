@@ -1,5 +1,7 @@
 export interface QueryOperators {
-	[key: string]: string | number | undefined | null | { [operator: string]: string | number | Array<string | number> | undefined | null };
+	[key: keyof typeof operatorMap & string ]: string | number | undefined | null | { [operator: string]: string | number | Array<string | number> | undefined | null };
+	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null | any };
+	select?: string;
 }
 
 
@@ -62,7 +64,7 @@ const defaultOptions = {
 	removeNullStringValue: true
 }
 
-function containsUnwantedString(value: any, options: Omit<IObjectToPostgrestQueryOptions, "isUrlParams">): boolean {
+function containsUnwantedString(value: object |string | number, options: Omit<IObjectToPostgrestQueryOptions, "isUrlParams">): boolean {
 	let hasErrorOne = false
 	let hasErrorTwo = false
 	if (options.removeNullStringValue) {
