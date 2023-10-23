@@ -12,7 +12,7 @@ export interface QueryOperators {
 const allowedOrdering = ['asc', 'desc', 'asc.nullsfirst', 'desc.nullslast']
 
 export interface OrderObject {
-	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | undefined | null | boolean };
+	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | undefined | null | boolean | string };
 }
 
 
