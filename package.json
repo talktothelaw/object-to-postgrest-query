@@ -32,7 +32,6 @@
     "url": "https://github.com/talktothelaw/object-to-postgrest-query/issues"
   },
   "homepage": "https://github.com/talktothelaw/object-to-postgrest-query#readme",
-  "dependencies": {},
   "devDependencies": {
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
