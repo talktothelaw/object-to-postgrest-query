@@ -1,12 +1,10 @@
 
 
 interface DataField {
-	[key: string]: {
-		[key in keyof typeof operatorMap]?: string | number | Array<string | number> | object
-	};
+	[key: string]: { [key in keyof typeof operatorMap]?: string | number | Array<string | number> | object } | number | string;
 }
+
 export interface QueryOperators {
-	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null | any };
 	select?: string;
 }
 
@@ -14,7 +12,7 @@ export interface QueryOperators {
 const allowedOrdering = ['asc', 'desc', 'asc.nullsfirst', 'desc.nullslast']
 
 export interface OrderObject {
-	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | string | undefined | null | any };
+	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast'  };
 }
 
 

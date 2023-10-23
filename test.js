@@ -11,8 +11,13 @@ const obj = {
 
 
 const postgrestQuery = objectToPostgrestQuery({
- law: {
+	limit: Number(100),
+	offset: Number(100),
+	order: {
+		slug:  "",
+		updated_at:  "desc",
 
- }
+	},
+	slug: {ilike:`*${"n"}*`}
 });
 console.log(postgrestQuery);  // Output: "age=order.desc&name=order.asc"
