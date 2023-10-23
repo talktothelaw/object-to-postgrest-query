@@ -14,7 +14,7 @@ const postgrestQuery = objectToPostgrestQuery({
 	limit: Number(2),
 	offset: Number(100),
 	order: {
-		slug:  "",
+		slug: false,
 		updated_at:  "desc",
 
 	},

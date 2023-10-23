@@ -1,7 +1,7 @@
 
 
 interface DataField {
-	[key: string]: { [key in keyof typeof operatorMap]?: string | number | Array<string | number> | object } | number | string;
+	[key: string]: { [key in keyof typeof operatorMap]?: string | number | Array<string | number> | object } | number | string | boolean ;
 }
 
 export interface QueryOperators {
@@ -12,7 +12,7 @@ export interface QueryOperators {
 const allowedOrdering = ['asc', 'desc', 'asc.nullsfirst', 'desc.nullslast']
 
 export interface OrderObject {
-	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast'  };
+	order?: { [key: string]: 'asc' | 'desc' | 'asc.nullsfirst' | 'desc.nullslast' | undefined | null | boolean };
 }
 
 
