@@ -121,6 +121,7 @@ export default function objectToPostgrestQuery(
 		}
 		const [operator, operand] = Object.entries(value)[0];
 		const formatted = formatValue(key, operator, operand);
+		if(!operand) return;
 		addToParams(formatted.split('=')[0], formatted.split('=')[1]);
 	}
 	
